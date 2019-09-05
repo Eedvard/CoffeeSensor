@@ -41,16 +41,22 @@ class Bot():
             print(len(command))
             print(command)
 
-            lastMessage = command["result"][-1]["message"]
-            lastChatId = lastMessage["chat"]["id"]
-            lastMessageText = lastMessage["text"]
+            if(len(command["result"])>0):
+                lastMessage = command["result"][-1]["message"]
+                lastChatId = lastMessage["chat"]["id"]
+                lastMessageText = lastMessage["text"]
+
+                lastSeen = command["result"][-1]["update_id"] + 1
+
+            else:
+                lastMessage = None
+                lastChatId = None
+                lastMessageText = None
 
             if(lastMessageText=="/help"):
                 self.sendMessage(lastChatId, "help")
             elif(lastMessageText=="/kahvi"):
                 self.sendMessage(lastChatId, "kahvi")
-
-            lastSeen = command["result"][-1]["update_id"] + 1
 
 
 if __name__ == '__main__':
