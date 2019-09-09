@@ -1,4 +1,5 @@
 import configparser, requests, time
+from readSerialPort import SerialReader
 
 class Bot():
 
@@ -7,6 +8,8 @@ class Bot():
         config = configparser.ConfigParser()
         config.read("settings.ini")
         self.api_token = config.get("secret", "token")
+        self.port = config.get("secret", "port")
+        self.ser = SerialReader(self.port)
 
         myInfo = self.getBot()
         self.id = myInfo["result"]["id"]
@@ -35,6 +38,7 @@ class Bot():
     def running(self):
 
         lastSeen = None
+        coffee = 0
         while True:
 
             command = self.getUpdates(lastSeen)
@@ -56,7 +60,10 @@ class Bot():
             if(lastMessageText=="/help"):
                 self.sendMessage(lastChatId, "help")
             elif(lastMessageText=="/kahvi"):
-                self.sendMessage(lastChatId, "kahvi")
+                self.ser.sendSerial(0)
+                coffee = self.ser.readSerial()
+                msg = "Kahvia on "+str(coffee)
+                self.sendMessage(lastChatId, msg)
 
 
 if __name__ == '__main__':
